@@ -23,6 +23,6 @@ def validasi_daun_tomat(image_bytes: bytes, media_type: str = "image/jpeg") -> d
     
     # Minimal 15% piksel harus hijau daun
     if persen_hijau >= 15:
-        return {"is_valid": True, "reason": f"Gambar terdeteksi sebagai daun tomat ({persen_hijau:.1f}% hijau)."}
+        return {"is_valid": True, "reason": f"Gambar terdeteksi sebagai daun tomat."}
     else:
-        return {"is_valid": False, "reason": f"Gambar bukan daun tomat ({persen_hijau:.1f}% hijau). Silakan upload gambar daun tomat yang jelas."}
+        return {"is_valid": False, "reason": f"Gambar bukan daun tomat."}
