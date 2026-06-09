@@ -419,24 +419,6 @@ if uploaded_file is not None:
             st.markdown(info["solusi"])
         
         st.markdown("---")
-        
-        top3_idx = np.argsort(predictions[0])[-3:][::-1]
-
-        st.subheader("📊 Top 3 Prediksi")
-
-        for idx in top3_idx:
-
-            nama = label_mapping[
-                class_names[idx]
-            ]
-
-            nilai = float(
-                predictions[0][idx] * 100
-            )
-
-            st.write(
-                f"{nama} — {nilai:.2f}%"
-            )
         # 6. TOMBOL EXPORT PDF OTOMATIS
         st.subheader("🖨️ Cetak PDF Hasil Analisa:")
         
