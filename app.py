@@ -107,7 +107,7 @@ st.markdown("""
 Deteksi & Solusi
 </span>
 <br>
-Penyakit Daun
+Penyakit Daun Tomat
 </div>
 
 <br>
