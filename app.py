@@ -9,10 +9,116 @@ from datetime import datetime
 
 from tensorflow.keras.applications.inception_v3 import preprocess_input
 
+st.markdown("""
+<style>
+
+[data-testid="stAppViewContainer"]{
+    background:
+    radial-gradient(circle at top right,#14532d 0%,#020617 40%),
+    linear-gradient(135deg,#020617,#052e16,#020617);
+}
+
+.block-container{
+    padding-top:2rem;
+}
+
+.hero-title{
+    font-size:64px;
+    font-weight:800;
+    color:white;
+    line-height:1.1;
+}
+
+.hero-highlight{
+    color:#22c55e;
+}
+
+.hero-sub{
+    color:#cbd5e1;
+    font-size:20px;
+}
+
+.glass{
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:25px;
+}
+
+.metric-card{
+    background:rgba(255,255,255,.04);
+    border-radius:18px;
+    padding:20px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,.06);
+}
+
+.result-card{
+    background:rgba(34,197,94,.12);
+    border-left:5px solid #22c55e;
+    border-radius:20px;
+    padding:20px;
+}
+
+.upload-box{
+    padding:35px;
+    text-align:center;
+    border:2px dashed #22c55e;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # 1. Judul dan Konfigurasi Halaman
-st.set_page_config(page_title="TomatAI - Deteksi Penyakit Daun", layout="centered")
-st.title("🍅 TomatAI: Deteksi & Solusi Penyakit Daun")
-st.write("Unggah foto daun tomat untuk mengetahui penyakit beserta solusinya.")
+st.set_page_config(
+    page_title="TomatAI Premium",
+    page_icon="🍅",
+    layout="wide"
+)
+
+st.markdown("""
+<style>
+
+[data-testid="stFileUploader"]{
+    background: rgba(255,255,255,0.04);
+    border-radius:20px;
+    padding:20px;
+}
+
+[data-testid="stFileUploader"] section{
+    border:2px dashed #22c55e !important;
+    border-radius:20px !important;
+    background:transparent !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div style='text-align:center;margin-top:20px'>
+
+<div class='hero-title'>
+🍅 TomatAI
+<br>
+<span class='hero-highlight'>
+Deteksi & Solusi
+</span>
+<br>
+Penyakit Daun
+</div>
+
+<br>
+
+<div class='hero-sub'>
+Unggah foto daun tomat untuk mengetahui penyakit
+dan solusi penanganannya menggunakan AI.
+</div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # 2. Database Solusi, Ciri-Ciri, dan Pencegahan (10 Kelas)
 def dapatkan_informasi_penyakit(nama_kelas):
@@ -180,8 +286,54 @@ try:
 except Exception as e:
     st.error(f"Gagal memuat model AI: {e}")
 
+col1,col2,col3 = st.columns(3)
+
+with col1:
+    st.markdown("""
+    <div class='metric-card'>
+    <h3>🎯 Akurasi Tinggi</h3>
+    <p>Model CNN mendeteksi 10 penyakit daun tomat.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+    <div class='metric-card'>
+    <h3>⚡ Cepat</h3>
+    <p>Analisis hanya beberapa detik.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+    <div class='metric-card'>
+    <h3>📋 Solusi Lengkap</h3>
+    <p>Gejala, pencegahan dan pengobatan otomatis.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
 # 5. Fitur Upload Gambar
-uploaded_file = st.file_uploader("Pilih gambar daun tomat...", type=["jpg", "jpeg", "png"])
+st.markdown("""
+<div style='text-align:center;padding:40px;'>
+
+<h1 style='font-size:56px;color:white;'>
+📤 Unggah Foto Daun Tomat
+</h1>
+
+<p style='font-size:22px;color:#cbd5e1;'>
+Pilih gambar JPG atau PNG yang jelas
+untuk dianalisis oleh AI
+</p>
+
+</div>
+""", unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader(
+    "",
+    type=["jpg","jpeg","png"],
+    label_visibility="collapsed"
+)
+
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
@@ -218,17 +370,73 @@ if uploaded_file is not None:
         info = dapatkan_informasi_penyakit(predicted_class)
         
         # Tampilan Output Utama
-        st.success(f"🔍 **Hasil Diagnosis:** {info['nama']} ({confidence:.2f}%)")
+        left,right = st.columns([1,1])
+
+        with left:
+            st.image(
+                image,
+                caption="Daun Tomat",
+                use_container_width=True
+            )
+
+        with right:
+
+            st.markdown(f"""
+            <div class='result-card'>
+
+            <h2>🔍 Hasil Diagnosis</h2>
+
+            <h3>{info['nama']}</h3>
+
+            <h4>Confidence: {confidence:.2f}%</h4>
+
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.progress(int(confidence))
+
+            st.metric(
+                "Tingkat Keyakinan AI",
+                f"{confidence:.2f}%"
+            )
         
         st.markdown("---")
         st.subheader("📋 Detail Laporan & Penanganan Medis:")
         
-        st.info(f"**👁️ Ciri-Ciri Gejala:**\n{info['ciri']}")
-        st.warning(f"**🛡️ Tindakan Pencegahan:**\n{info['pencegahan']}")
-        st.error(f"**💡 Solusi & Pengobatan:**\n{info['solusi']}")
+        tab1,tab2,tab3 = st.tabs([
+            "👁️ Gejala",
+            "🛡️ Pencegahan",
+            "💊 Solusi"
+        ])
+
+        with tab1:
+            st.markdown(info["ciri"])
+
+        with tab2:
+            st.markdown(info["pencegahan"])
+
+        with tab3:
+            st.markdown(info["solusi"])
         
         st.markdown("---")
         
+        top3_idx = np.argsort(predictions[0])[-3:][::-1]
+
+        st.subheader("📊 Top 3 Prediksi")
+
+        for idx in top3_idx:
+
+            nama = label_mapping[
+                class_names[idx]
+            ]
+
+            nilai = float(
+                predictions[0][idx] * 100
+            )
+
+            st.write(
+                f"{nama} — {nilai:.2f}%"
+            )
         # 6. TOMBOL EXPORT PDF OTOMATIS
         st.subheader("🖨️ Cetak PDF Hasil Analisa:")
         
@@ -237,8 +445,23 @@ if uploaded_file is not None:
         
         # Menampilkan tombol download bawaan Streamlit
         st.download_button(
-            label="📥 Unduh Laporan Diagnosis (PDF)",
-            data=pdf_data,
-            file_name=f"Laporan_TomatAI_{predicted_class}.pdf",
-            mime="application/pdf"
+            "📥 Download Laporan PDF",
+            pdf_data,
+            file_name=f"Laporan_{predicted_class}.pdf",
+            mime="application/pdf",
+            use_container_width=True
         )
+
+st.markdown("""
+<hr>
+
+<center>
+
+🍅 TomatAI Premium
+
+AI-Based Tomato Leaf Disease Detection System
+
+© 2026
+
+</center>
+""", unsafe_allow_html=True)
