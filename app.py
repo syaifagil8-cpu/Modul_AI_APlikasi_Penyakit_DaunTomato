@@ -3,10 +3,12 @@ import tensorflow as tf
 import numpy as np
 import json
 
+import io
+from validator import validasi_daun_tomat
+
 from PIL import Image
 from fpdf import FPDF
 from datetime import datetime
-
 from tensorflow.keras.applications.inception_v3 import preprocess_input
 
 st.markdown("""
@@ -336,8 +338,21 @@ uploaded_file = st.file_uploader(
 
 
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Gambar yang Diunggah", use_container_width=True)
+    image_bytes = uploaded_file.read()
+    
+    ext = uploaded_file.name.split(".")[-1].lower()
+    media_type_map = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png"}
+    media_type = media_type_map.get(ext, "image/jpeg")
+
+    with st.spinner("🔍 Memvalidasi gambar..."):
+        validasi = validasi_daun_tomat(image_bytes, media_type)
+        
+    if not validasi["is_valid"]:
+        st.error(f"❌ {validasi['reason']}")
+        st.info("Silakan upload gambar daun tomat yang jelas.")
+        st.stop()
+
+    image = Image.open(io.BytesIO(image_bytes))
     
     with st.spinner("AI sedang mendiagnosis daun..."):
         image = image.convert("RGB")
